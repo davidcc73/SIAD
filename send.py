@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import argparse
 import time
 from scapy.all import IP, UDP, TCP, Ether, Dot1Q, sendp, Raw
