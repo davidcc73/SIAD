@@ -46,10 +46,6 @@ def send_packets():
     first_timestamp = None
 
     for i in range(args.c):
-        if i == 0:
-            first_timestamp = time.time()  # Record the timestamp of the first packet
-            print(f"Timestamp of the first packet sent: {first_timestamp}")
-
         sendp(packet, verbose=False)
         time.sleep(args.i)
     
