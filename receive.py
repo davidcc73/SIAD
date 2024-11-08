@@ -13,12 +13,19 @@ args = parser.parse_args()
 # Log file for storing received packets information
 log_file = "received_packets.log"
 
+# Packet counter
+packet_count = 0
+
 # Function to process each packet
 def process_packet(packet):
+    global packet_count
     protocol = UDP if args.l4 == "UDP" else TCP
     
     # Check if the packet is the right protocol and source port
     if packet.haslayer(protocol) and packet[protocol].sport == args.sport:
+        # Increment packet count
+        packet_count += 1
+        
         # Record the timestamp and size of the packet
         timestamp = time.time()
         packet_size = len(packet)
@@ -27,7 +34,7 @@ def process_packet(packet):
         with open(log_file, "a") as f:
             f.write(f"Timestamp: {timestamp}, Packet Size: {packet_size} bytes\n")
         
-        print(f"Received packet at {timestamp} with size {packet_size} bytes")
+        print(f"Total packets received: {packet_count}")
 
 # Function to start packet sniffing
 def start_sniffing():
