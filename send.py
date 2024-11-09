@@ -2,8 +2,7 @@
 
 import argparse
 import time
-from scapy.all import IP, UDP, TCP, Ether, sendp, Raw
-from scapy import config
+from scapy.all import IP, UDP, TCP, Ether, sendp, Raw, conf
 
 # Set up argument parser
 parser = argparse.ArgumentParser(description="Send TCP or UDP packets with optional VLAN tagging")
@@ -15,7 +14,7 @@ parser.add_argument('--c', type=int, default=10, help="Number of packets to be s
 parser.add_argument('--l4', type=str, choices=["TCP", "UDP"], default="UDP", help="Protocol to use: TCP or UDP (default: UDP)")
 parser.add_argument('--sport', type=int, default=12345, help="Source port (default: 12345)")
 parser.add_argument('--dport', type=int, default=80, help="Destination port (default: 80)")
-parser.add_argument('--interface', type=str, required=True, help="interface for sending packets")
+parser.add_argument('--iface', type=str, required=True, help="interface for sending packets")
 
 args = parser.parse_args()
 
@@ -47,7 +46,7 @@ def create_packet():
 # Function to send packets
 def send_packets():
     packet = create_packet()
-    conf.iface = arg.interface
+    conf.iface = args.iface
     print("Starting packet sending...")
 
     for i in range(args.c):

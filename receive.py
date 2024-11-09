@@ -6,9 +6,10 @@ from scapy.all import sniff
 from scapy.layers.inet import IP, UDP, TCP
 
 # Set up argument parser
-parser = argparse.ArgumentParser(description="Receive and log TCP or UDP packets")
+parser = argparse.ArgumentParser(description="Receive and log TCP or UDP IPv4 packets")
 parser.add_argument('-l4', type=str, choices=["TCP", "UDP"], default="UDP", help="Protocol to listen to: TCP or UDP (default: UDP)")
-parser.add_argument('-sport', type=int, default=12345, help="Source port to listen on (default: 12345)")
+parser.add_argument('-port', type=int, required=True, help="Port to listen on")
+parser.add_argument('-iface', type=str, required=True, help="Network interface to listen on")
 
 args = parser.parse_args()
 
@@ -37,12 +38,12 @@ def process_packet(packet):
 
 # Function to start packet sniffing
 def start_sniffing():
-    print("Starting to listen for packets...")
+    print(f"Starting to listen for IPv4 packets on interface {args.iface}, port {args.port}...")
 
     # Define the protocol filter for sniffing
     protocol = "udp" if args.l4 == "UDP" else "tcp"
-    # Use scapy's sniff function with a filter for the specified protocol and source port
-    sniff(filter=f"{protocol} and src port {args.sport}", prn=process_packet)
+    # Use scapy's sniff function with a filter for the specified protocol, IPv4, and specified port
+    sniff(filter=f"ip and {protocol} and port {args.port}", iface=args.iface, prn=process_packet)
 
 # Start the receiving process
 start_sniffing()
