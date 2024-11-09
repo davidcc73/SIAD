@@ -8,9 +8,9 @@ from scapy.layers.inet import IP, UDP, TCP
 
 # Set up argument parser
 parser = argparse.ArgumentParser(description="Receive and log TCP or UDP IPv4 packets")
-parser.add_argument('-l4', type=str, choices=["TCP", "UDP"], default="UDP", help="Protocol to listen to: TCP or UDP (default: UDP)")
-parser.add_argument('-port', type=int, required=True, help="Port to listen on")
-parser.add_argument('-iface', type=str, required=True, help="Network interface to listen on")
+parser.add_argument('--l4', type=str, choices=["TCP", "UDP"], default="UDP", help="Protocol to listen to: TCP or UDP (default: UDP)")
+parser.add_argument('--port', type=int, required=True, help="Port to listen on")
+parser.add_argument('--iface', type=str, required=True, help="Network interface to listen on")
 
 args = parser.parse_args()
 
