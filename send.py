@@ -2,12 +2,13 @@
 
 import argparse
 import time
-from scapy.all import IP, UDP, TCP, Ether, Dot1Q, sendp, Raw
+from scapy.all import IP, UDP, TCP, Ether, sendp, Raw
 
 # Set up argument parser
 parser = argparse.ArgumentParser(description="Send TCP or UDP packets with optional VLAN tagging")
 parser.add_argument('--i', type=float, default=1, help="Interval of sending packets in seconds (default: 1)")
 parser.add_argument('--ip', type=str, default="192.168.1.1", help="Destination IP (default: 192.168.1.1)")
+parser.add_argument('--src_ip', type=str, help="Source IP (default: None)")
 parser.add_argument('--size', type=int, default=64, help="Total size of the packet including Ethernet header in bytes (default: 64)")
 parser.add_argument('--c', type=int, default=10, help="Number of packets to be sent (default: 10)")
 parser.add_argument('--l4', type=str, choices=["TCP", "UDP"], default="UDP", help="Protocol to use: TCP or UDP (default: UDP)")
@@ -21,8 +22,10 @@ def create_packet():
     # Construct the Ethernet header
     eth = Ether()
 
-    # Create IP header with destination IP
+    # Create IP header with source and destination IP
     ip_layer = IP(dst=args.ip)
+    if args.src_ip:
+        ip_layer.src = args.src_ip
 
     # Determine L4 protocol and construct the appropriate layer
     if args.l4 == "UDP":
@@ -43,7 +46,6 @@ def create_packet():
 def send_packets():
     packet = create_packet()
     print("Starting packet sending...")
-    first_timestamp = None
 
     for i in range(args.c):
         sendp(packet, verbose=False)
