@@ -21,29 +21,27 @@ packet_count = 0
 # Function to process each packet
 def process_packet(packet):
     global packet_count
-    protocol = UDP if args.l4 == "UDP" else TCP
+
+    # Increment packet count
+    packet_count += 1
+
+    # Record the timestamp and size of the packet
+    timestamp = time.time()
+    packet_size = len(packet)
+
+    # Write to log file
+    with open(log_file, "a") as f:
+        f.write(f"Timestamp: {timestamp}, Packet Size: {packet_size} bytes\n")
     
-    # Check if the packet is the right protocol and source port
-    if packet.haslayer(protocol) and packet[protocol].sport == args.sport:
-        # Increment packet count
-        packet_count += 1
-        
-        # Record the timestamp and size of the packet
-        timestamp = time.time()
-        packet_size = len(packet)
-        
-        # Write to log file
-        with open(log_file, "a") as f:
-            f.write(f"Timestamp: {timestamp}, Packet Size: {packet_size} bytes\n")
-        
-        print(f"Total packets received: {packet_count}")
+    print(f"Total packets received: {packet_count}")
 
 # Function to start packet sniffing
 def start_sniffing():
     print("Starting to listen for packets...")
+
     # Define the protocol filter for sniffing
     protocol = "udp" if args.l4 == "UDP" else "tcp"
-    # Start sniffing
+    # Use scapy's sniff function with a filter for the specified protocol and source port
     sniff(filter=f"{protocol} and src port {args.sport}", prn=process_packet)
 
 # Start the receiving process
