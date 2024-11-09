@@ -2,6 +2,7 @@
 
 import argparse
 import time
+import os
 from scapy.all import sniff
 from scapy.layers.inet import IP, UDP, TCP
 
@@ -15,6 +16,10 @@ args = parser.parse_args()
 
 # Log file for storing received packets information
 log_file = "received_packets.log"
+
+# Delete old log file if it exists
+if os.path.exists(log_file):
+    os.remove(log_file)
 
 # Packet counter
 packet_count = 0
