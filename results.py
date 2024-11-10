@@ -36,5 +36,5 @@ def plot_bandwidth_usage(file_path, output_file="bandwidth_usage.png"):
     plt.close()  # Close the plot to avoid memory issues
 
 # Example usage
-file_path = 'log_file.csv'  # Replace with your actual log file path
+file_path = 'received_packets.csv'  # Replace with your actual log file path
 plot_bandwidth_usage(file_path, output_file="bandwidth_usage.png")
