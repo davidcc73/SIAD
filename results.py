@@ -66,8 +66,8 @@ def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, burst_credit, file_path=
     exceeded_times = bandwidth_usage[bandwidth_usage['burst_exceeded'] == 1]
     plt.scatter(exceeded_times.index, exceeded_times['packet_size'], color='red', label="Burst Size Exceeded", zorder=5)
     
-    # Add the burst credit value in the legend
-    plt.plot([], [], label=f"Defined Burst Credit ({burst_credit:.2f} KB)")  # Invisible line for label
+    # Add the burst credit label in the legend without color
+    plt.plot([], [], color='none', label=f"Defined Burst Credit ({burst_credit:.2f} KB)")  # Invisible line for label
     
     # Adding labels and title
     plt.xlabel("Time")
