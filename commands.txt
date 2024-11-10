@@ -21,4 +21,4 @@ sudo python3 receive.py --l4 TCP --port 12345 --iface ens256
 
 
 # process results
-sudo python3 results.py -avg_bandwidth 4000 -peak_bandwidth 8000
+sudo python3 results.py -avg 4000 -peak 8000
