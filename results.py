@@ -23,16 +23,21 @@ def calculate_cumulative_bandwidth(data):
     data['cumulative_bandwidth'] = data['packet_size'].cumsum()
     return data
 
-# Plot bandwidth usage per second
+# Plot bandwidth usage per second with averaged data for each second
 def plot_bandwidth_usage_per_second(data):
+    # Group and average the packet sizes per second
+    averaged_data = data['packet_size'].resample('1S').mean()
+
+    # Plot the averaged bandwidth usage per second
     plt.figure(figsize=(12, 6))
-    plt.plot(data.index, data['bandwidth'], label="Bandwidth Usage per Second", color="blue")
-    plt.xlabel("Time")
-    plt.ylabel("Bandwidth (Bytes/sec)")
-    plt.title("Bandwidth Usage Per Second Over Time")
+    plt.plot(averaged_data.index, averaged_data, label="Average Bandwidth Usage per Second", color="blue")
+    plt.xlabel("Time (seconds)")
+    plt.ylabel("Average Bandwidth (Bytes/sec)")
+    plt.title("Average Bandwidth Usage Per Second Over Time")
     plt.legend()
     plt.grid()
     plt.savefig("bandwidth_usage_per_second.png")
+
 
 # Plot average bandwidth to check if it adheres to the defined limit
 def plot_average_bandwidth(data, avg_bandwidth_limit):
