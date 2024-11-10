@@ -23,10 +23,16 @@ def calculate_cumulative_bandwidth(data):
     data['cumulative_bandwidth'] = data['packet_size'].cumsum()
     return data
 
-# Export bandwidth usage per second
-def export_bandwidth_usage(data, output_file="bandwidth_usage_per_second.csv"):
-    data[['bandwidth']].dropna().to_csv(output_file)
-    print(f"Bandwidth usage per second has been saved to {output_file}")
+# Plot bandwidth usage per second
+def plot_bandwidth_usage_per_second(data):
+    plt.figure(figsize=(12, 6))
+    plt.plot(data.index, data['bandwidth'], label="Bandwidth Usage per Second", color="blue")
+    plt.xlabel("Time")
+    plt.ylabel("Bandwidth (Bytes/sec)")
+    plt.title("Bandwidth Usage Per Second Over Time")
+    plt.legend()
+    plt.grid()
+    plt.savefig("bandwidth_usage_per_second.png")
 
 # Plot average bandwidth to check if it adheres to the defined limit
 def plot_average_bandwidth(data, avg_bandwidth_limit):
@@ -68,29 +74,24 @@ def plot_cumulative_bandwidth(data, burst_size_limit):
 def analyze_traffic_shaping(file_path, avg_bandwidth_limit, peak_bandwidth_limit, burst_size_limit):
     data = load_logs(file_path)
 
-    # Define total time window
-    total_time_window = data.index[-1] - data.index[0]
-
     # Calculate bandwidth and moving average for average bandwidth analysis
     data = calculate_moving_average(data)
 
     # Calculate cumulative bandwidth for burst size analysis
     data = calculate_cumulative_bandwidth(data)
 
-    # Export bandwidth usage per second
-    export_bandwidth_usage(data)
-
     # Generate and save plots
+    plot_bandwidth_usage_per_second(data)
     plot_average_bandwidth(data, avg_bandwidth_limit)
     plot_peak_bandwidth(data, peak_bandwidth_limit)
     plot_cumulative_bandwidth(data, burst_size_limit)
 
-    print("Analysis complete. Graphs have been saved as PNG files and bandwidth usage per second has been exported.")
+    print("Analysis complete. Graphs have been saved as PNG files.")
 
 # Run the analysis (replace with actual file path and bandwidth limits)
 file_path = "received_packets.csv"  # Path to your log file
 avg_bandwidth_limit = 5000     # Example average bandwidth limit (bytes per second)
-peak_bandwidth_limit = 8000   # Example peak bandwidth limit (bytes per second)
-burst_size_limit = 16000      # Example burst size limit (bytes)
+peak_bandwidth_limit = 8000    # Example peak bandwidth limit (bytes per second)
+burst_size_limit = 16000       # Example burst size limit (bytes)
 
 analyze_traffic_shaping(file_path, avg_bandwidth_limit, peak_bandwidth_limit, burst_size_limit)
