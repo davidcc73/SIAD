@@ -17,17 +17,37 @@ def load_logs(file_path):
     
     return data
 
-# Function to plot bandwidth usage and burst size violation
-def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, file_path='received_packets.csv', output_file='bandwidth_usage.png'):
+# Function to track the credit system for burst size and plot the graph
+def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, burst_credit, file_path='received_packets.csv', output_file='bandwidth_usage.png'):
     # Load the log data
     data = load_logs(file_path)
     
     # Resample data to get the total packet size per second
     bandwidth_usage = data.resample('S').sum()  # Resample by second and sum packet sizes
+
+    # Initialize credit and burst exceeded tracking
+    current_credit = burst_credit
+    burst_exceeded = []
     
-    # Create a mask to detect periods where the bandwidth usage exceeds the peak bandwidth
-    burst_violation = bandwidth_usage['packet_size'] > peak_bandwidth
-    
+    # Create a list to track whether burst was exceeded in each second
+    for i, row in bandwidth_usage.iterrows():
+        # If bandwidth usage is below the average, the credit is replenished
+        if row['packet_size'] < avg_bandwidth:
+            # Add credit if there's bandwidth under the average
+            current_credit = min(current_credit + (avg_bandwidth - row['packet_size']), burst_credit)
+        elif row['packet_size'] > avg_bandwidth:
+            # If usage exceeds the average bandwidth, check if there is enough credit
+            if row['packet_size'] > avg_bandwidth + current_credit:
+                burst_exceeded.append(1)  # Burst exceeded
+            else:
+                current_credit -= (row['packet_size'] - avg_bandwidth)  # Use burst credit for the excess bandwidth
+                burst_exceeded.append(0)  # Burst not exceeded
+        else:
+            burst_exceeded.append(0)  # No excess, burst not exceeded
+
+    # Add the burst exceeded status to the bandwidth usage data for plotting
+    bandwidth_usage['burst_exceeded'] = burst_exceeded
+
     # Plotting the graph
     plt.figure(figsize=(10, 6))
     plt.plot(bandwidth_usage.index, bandwidth_usage['packet_size'], label="Bandwidth Usage (KB)", color="b")
@@ -35,15 +55,15 @@ def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, file_path='received_pack
     # Plot horizontal lines for average and peak bandwidth
     plt.axhline(avg_bandwidth, color='g', linestyle='--', label=f"Defined Average Bandwidth ({avg_bandwidth:.2f} KB)")
     plt.axhline(peak_bandwidth, color='r', linestyle='--', label=f"Defined Peak Bandwidth ({peak_bandwidth:.2f} KB)")
-    
-    # Highlight areas where the burst size was exceeded (violation)
-    plt.fill_between(bandwidth_usage.index, bandwidth_usage['packet_size'], peak_bandwidth, where=burst_violation,
-                    color='red', alpha=0.3, label="Burst Size Violation")
+
+    # Highlight periods where burst credit was exceeded
+    exceeded_times = bandwidth_usage[bandwidth_usage['burst_exceeded'] == 1]
+    plt.scatter(exceeded_times.index, exceeded_times['packet_size'], color='red', label="Burst Size Exceeded", zorder=5)
     
     # Adding labels and title
     plt.xlabel("Time")
     plt.ylabel("Bandwidth Usage (KB)")
-    plt.title("Bandwidth Usage per Second with Burst Size Violations")
+    plt.title("Bandwidth Usage per Second with Burst Credit Tracking")
     plt.grid(True)
     plt.legend()
     
@@ -57,12 +77,13 @@ def main():
     parser = argparse.ArgumentParser(description="Plot bandwidth usage with traffic shaping values")
     parser.add_argument("avg", type=float, help="Average Bandwidth (in KB)")
     parser.add_argument("peak", type=float, help="Peak Bandwidth Burst Size (in KB)")
+    parser.add_argument("burst_credit", type=float, help="Burst Credit Size (in KB)")
 
     # Parse the arguments
     args = parser.parse_args()
 
     # Call the plot function with the provided arguments
-    plot_bandwidth_usage(args.avg, args.peak)
+    plot_bandwidth_usage(args.avg, args.peak, args.burst_credit)
 
 # Run the script
 if __name__ == "__main__":
