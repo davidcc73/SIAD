@@ -27,14 +27,15 @@ def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, burst_credit, file_path=
 
     # Initialize credit and burst exceeded tracking
     current_credit = burst_credit
-    burst_exceeded = []
-    
-    # Create a list to track whether burst was exceeded in each second
+    burst_exceeded = []  # List to store burst exceeded information
+
+    # Iterate over each second of bandwidth usage
     for i, row in bandwidth_usage.iterrows():
         # If bandwidth usage is below the average, the credit is replenished
         if row['packet_size'] < avg_bandwidth:
             # Add credit if there's bandwidth under the average
             current_credit = min(current_credit + (avg_bandwidth - row['packet_size']), burst_credit)
+            burst_exceeded.append(0)  # Burst not exceeded
         elif row['packet_size'] > avg_bandwidth:
             # If usage exceeds the average bandwidth, check if there is enough credit
             if row['packet_size'] > avg_bandwidth + current_credit:
@@ -44,6 +45,11 @@ def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, burst_credit, file_path=
                 burst_exceeded.append(0)  # Burst not exceeded
         else:
             burst_exceeded.append(0)  # No excess, burst not exceeded
+
+    # Ensure the burst_exceeded list matches the length of bandwidth_usage DataFrame
+    if len(burst_exceeded) != len(bandwidth_usage):
+        # In case of mismatch, pad the list to match the length
+        burst_exceeded.extend([0] * (len(bandwidth_usage) - len(burst_exceeded)))
 
     # Add the burst exceeded status to the bandwidth usage data for plotting
     bandwidth_usage['burst_exceeded'] = burst_exceeded
