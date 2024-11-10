@@ -15,3 +15,9 @@ sudo python3 receive.py --l4 UDP --dport 12345 --iface ens256
 
 sudo python3 send.py --src_ip 180.168.0.1 --dst_ip 180.168.0.2 --iface ens256 --size 128 --c 50 --l4 TCP --sport 5555 --dport 80 --i 0.5
 sudo python3 receive.py --l4 TCP --dport 12345 --iface ens256
+
+
+
+
+#
+sudo python3 results.py
