@@ -37,7 +37,7 @@ def process_packet(packet):
 
     # Write to log file
     with open(log_file, "a") as f:
-        f.write(f"Timestamp: {timestamp}, Packet Size: {packet_size} bytes\n")
+        f.write(f"{timestamp};{packet_size}\n")
     
     print(f"Total packets received: {packet_count}")
 
