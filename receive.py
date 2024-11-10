@@ -15,7 +15,7 @@ parser.add_argument('--iface', type=str, required=True, help="Network interface 
 args = parser.parse_args()
 
 # Log file for storing received packets information
-log_file = "received_packets.log"
+log_file = "received_packets.csv"
 
 # Delete old log file if it exists
 if os.path.exists(log_file):

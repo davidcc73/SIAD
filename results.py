@@ -4,9 +4,11 @@ import numpy as np
 
 # Function to load and process the log file
 def load_logs(file_path):
-    # Load data with columns: timestamp and packet_size
-    data = pd.read_csv(file_path, names=["timestamp", "packet_size"])
-    data["timestamp"] = pd.to_datetime(data["timestamp"])  # Convert timestamp to datetime
+    # Load data with columns: timestamp and packet_size, using ';' as the delimiter
+    data = pd.read_csv(file_path, delimiter=";", names=["timestamp", "packet_size"])
+    
+    # Convert Unix timestamp (float) to datetime format
+    data["timestamp"] = pd.to_datetime(data["timestamp"], unit='s')
     data = data.set_index("timestamp")
     return data
 
