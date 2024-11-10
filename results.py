@@ -30,8 +30,8 @@ def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, file_path='received_pack
     plt.plot(bandwidth_usage.index, bandwidth_usage['packet_size'], label="Bandwidth Usage (bytes)", color="b")
     
     # Plot horizontal lines for average and peak bandwidth
-    plt.axhline(avg_bandwidth_value, color='g', linestyle='--', label=f"Average Bandwidth ({avg_bandwidth_value} bytes)")
-    plt.axhline(peak_bandwidth_value, color='r', linestyle='--', label=f"Peak Bandwidth ({peak_bandwidth_value} bytes)")
+    plt.axhline(avg_bandwidth_value, color='g', linestyle='--', label=f"Defined Average Bandwidth ({avg_bandwidth_value} bytes)")
+    plt.axhline(peak_bandwidth_value, color='r', linestyle='--', label=f"Defined Peak Bandwidth ({peak_bandwidth_value} bytes)")
     
     # Adding labels and title
     plt.xlabel("Time")
