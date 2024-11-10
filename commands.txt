@@ -21,4 +21,4 @@ sudo python3 receive.py --l4 TCP --port 12345 --iface ens256
 
 
 # process results
-sudo python3 results.py 3.5 7 10
+sudo python3 results.py 3.7 7 10

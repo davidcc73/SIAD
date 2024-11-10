@@ -62,18 +62,17 @@ def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, burst_credit, file_path=
     plt.axhline(avg_bandwidth, color='g', linestyle='--', label=f"Defined Average Bandwidth ({avg_bandwidth:.2f} KB)")
     plt.axhline(peak_bandwidth, color='r', linestyle='--', label=f"Defined Peak Bandwidth ({peak_bandwidth:.2f} KB)")
     
-    # Add the burst credit label as a text annotation instead of a line
-    plt.text(bandwidth_usage.index[int(len(bandwidth_usage)/2)], burst_credit + 1,  # Positioning the label
-             f"Defined Burst Credit ({burst_credit:.2f} KB)", color='orange', fontsize=12, ha='center')
-    
     # Highlight periods where burst credit was exceeded
     exceeded_times = bandwidth_usage[bandwidth_usage['burst_exceeded'] == 1]
     plt.scatter(exceeded_times.index, exceeded_times['packet_size'], color='red', label="Burst Size Exceeded", zorder=5)
     
+    # Add the burst credit value in the legend
+    plt.plot([], [], color='orange', label=f"Defined Burst Credit ({burst_credit:.2f} KB)")  # Invisible line for label
+    
     # Adding labels and title
     plt.xlabel("Time")
     plt.ylabel("Bandwidth Usage (KB)")
-    plt.title("Bandwidth Usage per Second with Burst Credit Tracking")
+    plt.title("Bandwidth Usage per Second")
     plt.grid(True)
     plt.legend()
     
