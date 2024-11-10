@@ -11,6 +11,10 @@ def load_logs(file_path):
     # Convert Unix timestamp (float) to datetime format
     data["timestamp"] = pd.to_datetime(data["timestamp"], unit='s')
     data = data.set_index("timestamp")
+    
+    # Convert packet_size from bytes to kilobytes
+    data["packet_size"] = data["packet_size"] / 1024  # Convert bytes to kilobytes
+    
     return data
 
 # Function to plot bandwidth usage
@@ -21,21 +25,17 @@ def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, file_path='received_pack
     # Resample data to get the total packet size per second
     bandwidth_usage = data.resample('S').sum()  # Resample by second and sum packet sizes
     
-    # Calculate average bandwidth and peak burst size (in bytes)
-    avg_bandwidth_value = avg_bandwidth  # Average bandwidth in bytes
-    peak_bandwidth_value = peak_bandwidth  # Peak burst size in bytes
-    
     # Plotting the graph
     plt.figure(figsize=(10, 6))
-    plt.plot(bandwidth_usage.index, bandwidth_usage['packet_size'], label="Bandwidth Usage (bytes)", color="b")
+    plt.plot(bandwidth_usage.index, bandwidth_usage['packet_size'], label="Bandwidth Usage (KB)", color="b")
     
     # Plot horizontal lines for average and peak bandwidth
-    plt.axhline(avg_bandwidth_value, color='g', linestyle='--', label=f"Defined Average Bandwidth ({avg_bandwidth_value} bytes)")
-    plt.axhline(peak_bandwidth_value, color='r', linestyle='--', label=f"Defined Peak Bandwidth ({peak_bandwidth_value} bytes)")
+    plt.axhline(avg_bandwidth, color='g', linestyle='--', label=f"Defined Average Bandwidth ({avg_bandwidth:.2f} KB)")
+    plt.axhline(peak_bandwidth, color='r', linestyle='--', label=f"Defined Peak Bandwidth ({peak_bandwidth:.2f} KB)")
     
     # Adding labels and title
     plt.xlabel("Time")
-    plt.ylabel("Bandwidth Usage (bytes)")
+    plt.ylabel("Bandwidth Usage (KB)")
     plt.title("Bandwidth Usage per Second")
     plt.grid(True)
     plt.legend()
@@ -48,8 +48,8 @@ def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, file_path='received_pack
 def main():
     # Set up the argument parser
     parser = argparse.ArgumentParser(description="Plot bandwidth usage with traffic shaping values")
-    parser.add_argument("avg", type=int, help="Average Bandwidth (in bytes)")
-    parser.add_argument("peak", type=int, help="Peak Bandwidth Burst Size (in bytes)")
+    parser.add_argument("avg", type=float, help="Average Bandwidth (in KB)")
+    parser.add_argument("peak", type=float, help="Peak Bandwidth Burst Size (in KB)")
 
     # Parse the arguments
     args = parser.parse_args()
