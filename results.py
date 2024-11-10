@@ -55,7 +55,7 @@ def main():
     args = parser.parse_args()
 
     # Call the plot function with the provided arguments
-    plot_bandwidth_usage(args.file_path, args.avg, args.peak)
+    plot_bandwidth_usage(args.avg, args.peak)
 
 # Run the script
 if __name__ == "__main__":
