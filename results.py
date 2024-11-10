@@ -14,7 +14,7 @@ def load_logs(file_path):
     return data
 
 # Function to plot bandwidth usage
-def plot_bandwidth_usage(file_path, avg_bandwidth, peak_bandwidth, output_file):
+def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, file_path='received_packets.csv', output_file='bandwidth_usage.png'):
     # Load the log data
     data = load_logs(file_path)
     
@@ -48,16 +48,14 @@ def plot_bandwidth_usage(file_path, avg_bandwidth, peak_bandwidth, output_file):
 def main():
     # Set up the argument parser
     parser = argparse.ArgumentParser(description="Plot bandwidth usage with traffic shaping values")
-    parser.add_argument("file_path", default='received_packets.csv', help="Path to the log file")
     parser.add_argument("avg", type=int, help="Average Bandwidth (in bytes)")
     parser.add_argument("peak", type=int, help="Peak Bandwidth Burst Size (in bytes)")
-    parser.add_argument("output_file", default="bandwidth_usage.png", help="Output file name for the graph")
 
     # Parse the arguments
     args = parser.parse_args()
 
     # Call the plot function with the provided arguments
-    plot_bandwidth_usage(args.file_path, args.avg, args.peak, args.output_file)
+    plot_bandwidth_usage(args.file_path, args.avg, args.peak)
 
 # Run the script
 if __name__ == "__main__":
