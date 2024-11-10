@@ -48,10 +48,10 @@ def plot_bandwidth_usage(file_path, avg_bandwidth, peak_bandwidth, output_file):
 def main():
     # Set up the argument parser
     parser = argparse.ArgumentParser(description="Plot bandwidth usage with traffic shaping values")
-    parser.add_argument("file_path", default='received_packets.csv', help="Path to the log file")
-    parser.add_argument("avg", type=int, help="Average Bandwidth (in bytes)")
-    parser.add_argument("peak", type=int, help="Peak Bandwidth Burst Size (in bytes)")
-    parser.add_argument("output_file", default="bandwidth_usage.png", help="Output file name for the graph")
+    parser.add_argument("file_path", required=False, default='received_packets.csv', help="Path to the log file")
+    parser.add_argument("avg", required=True, type=int, help="Average Bandwidth (in bytes)")
+    parser.add_argument("peak", required=True, type=int, help="Peak Bandwidth Burst Size (in bytes)")
+    parser.add_argument("output_file", required=False, default="bandwidth_usage.png", help="Output file name for the graph")
 
     # Parse the arguments
     args = parser.parse_args()
