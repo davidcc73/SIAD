@@ -59,20 +59,12 @@ def plot_cumulative_bandwidth(data, burst_size_limit):
     plt.grid()
     plt.savefig("cumulative_bandwidth.png")
 
-# Plot the evolution of average bandwidth over 1-second windows
-def plot_average_bandwidth_evolution(data):
-    plt.figure(figsize=(12, 6))
-    plt.plot(data.index, data['bandwidth'], label="Average Bandwidth (1-second window)", color="darkblue")
-    plt.xlabel("Time")
-    plt.ylabel("Average Bandwidth (Bytes/sec)")
-    plt.title("Evolution of Average Bandwidth Usage")
-    plt.legend()
-    plt.grid()
-    plt.savefig("average_bandwidth_evolution.png")
-
 # Main function to run all processes and export graphs
 def analyze_traffic_shaping(file_path, avg_bandwidth_limit, peak_bandwidth_limit, burst_size_limit):
     data = load_logs(file_path)
+
+    # Define total time window
+    total_time_window = data.index[-1] - data.index[0]
 
     # Calculate bandwidth and moving average for average bandwidth analysis
     data = calculate_moving_average(data)
@@ -84,7 +76,6 @@ def analyze_traffic_shaping(file_path, avg_bandwidth_limit, peak_bandwidth_limit
     plot_average_bandwidth(data, avg_bandwidth_limit)
     plot_peak_bandwidth(data, peak_bandwidth_limit)
     plot_cumulative_bandwidth(data, burst_size_limit)
-    plot_average_bandwidth_evolution(data)  # New plot for average bandwidth evolution
 
     print("Analysis complete. Graphs have been saved as PNG files.")
 
