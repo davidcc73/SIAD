@@ -49,9 +49,22 @@ def send_packets():
     conf.iface = args.iface
     print("Starting packet sending...")
 
+    # Get the current time
+    last_send_time = time.perf_counter()
+
     for i in range(args.c):
         sendp(packet, verbose=False)
-        time.sleep(args.i)
+        
+        # Calculate the time spent and adjust the next sleep time
+        current_time = time.perf_counter()
+        elapsed_time = current_time - last_send_time
+        sleep_time = max(0, args.i - elapsed_time)  # Ensure non-negative sleep time
+        
+        # Sleep to maintain the correct interval
+        time.sleep(sleep_time)
+        
+        # Update the last send time
+        last_send_time = current_time
     
     print("Completed sending packets.")
 
