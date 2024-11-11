@@ -95,7 +95,7 @@ def main():
     args = parser.parse_args()
 
     # Call the plot function with the provided arguments
-    plot_bandwidth_usage(args.avg, args.peak, args.burst_credit)
+    plot_bandwidth_usage(args.avg, args.peak, args.burst_credit / 8)  # Convert burst credit from KB to Kbit
 
 # Run the script
 if __name__ == "__main__":
