@@ -40,13 +40,15 @@ def plot_bandwidth_usage(avg_bandwidth_kbit, peak_bandwidth_kbit, burst_credit_k
             current_credit = min(current_credit + (avg_bandwidth - row['packet_size']), burst_credit_kb)
             burst_exceeded.append(0)  # Burst not exceeded
         elif row['packet_size'] > avg_bandwidth:
+            
             # If usage exceeds the average bandwidth, check if there is enough credit
             if row['packet_size'] > avg_bandwidth + current_credit:
+                current_credit = 0  # Reset credit to 0
                 burst_exceeded.append(1)  # Burst exceeded
-            else:
+            else:  # Burst not exceeded
                 current_credit -= (row['packet_size'] - avg_bandwidth)  # Use burst credit for the excess bandwidth
-                burst_exceeded.append(0)  # Burst not exceeded
-        else:
+                burst_exceeded.append(0)
+        else:  # Burst not exceeded (equal to average bandwidth)
             burst_exceeded.append(0)  # No excess, burst not exceeded
 
     # Ensure the burst_exceeded list matches the length of bandwidth_usage DataFrame
