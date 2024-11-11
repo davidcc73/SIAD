@@ -20,7 +20,6 @@ def load_logs(file_path):
 def plot_bandwidth_usage(avg_bandwidth_kbit, peak_bandwidth_kbit, burst_credit_kb, file_path='received_packets.csv', output_file='bandwidth_usage.png'):
     # Convert average and peak bandwidth from Kbits to KBytes for internal calculations
     avg_bandwidth = avg_bandwidth_kbit * 1000 / 8 / 1024
-    peak_bandwidth = peak_bandwidth_kbit * 1000 / 8 / 1024
 
     # Load the log data
     data = load_logs(file_path)
@@ -35,19 +34,22 @@ def plot_bandwidth_usage(avg_bandwidth_kbit, peak_bandwidth_kbit, burst_credit_k
     # Iterate over each second of bandwidth usage
     for i, row in bandwidth_usage.iterrows():
         # If bandwidth usage is below the average, the credit is replenished
+        print("row['packet_size']:", row['packet_size'], "avg_bandwidth:", avg_bandwidth)
         if row['packet_size'] < avg_bandwidth:
             # Add credit if there's bandwidth under the average
             current_credit = min(current_credit + (avg_bandwidth - row['packet_size']), burst_credit_kb)
             burst_exceeded.append(0)  # Burst not exceeded
+
         elif row['packet_size'] > avg_bandwidth:
-            
             # If usage exceeds the average bandwidth, check if there is enough credit
             if row['packet_size'] > avg_bandwidth + current_credit:
                 current_credit = 0  # Reset credit to 0
                 burst_exceeded.append(1)  # Burst exceeded
+
             else:  # Burst not exceeded
                 current_credit -= (row['packet_size'] - avg_bandwidth)  # Use burst credit for the excess bandwidth
                 burst_exceeded.append(0)
+
         else:  # Burst not exceeded (equal to average bandwidth)
             burst_exceeded.append(0)  # No excess, burst not exceeded
 
