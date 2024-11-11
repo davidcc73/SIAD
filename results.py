@@ -19,8 +19,8 @@ def load_logs(file_path):
 # Function to track the credit system for burst size and plot the graph
 def plot_bandwidth_usage(avg_bandwidth_kbit, peak_bandwidth_kbit, burst_credit_kb, file_path='received_packets.csv', output_file='bandwidth_usage.png'):
     # Convert average and peak bandwidth from Kbits to KBytes for internal calculations
-    avg_bandwidth = avg_bandwidth_kbit / 8
-    peak_bandwidth = peak_bandwidth_kbit / 8
+    avg_bandwidth = avg_bandwidth_kbit * 1000 / 8 / 1024
+    peak_bandwidth = peak_bandwidth_kbit * 1000 / 8 / 1024
 
     # Load the log data
     data = load_logs(file_path)
@@ -70,7 +70,7 @@ def plot_bandwidth_usage(avg_bandwidth_kbit, peak_bandwidth_kbit, burst_credit_k
     plt.scatter(exceeded_times.index, exceeded_times['packet_size'], color='red', label="Burst Size Exceeded", zorder=5)
     
     # Add the burst credit label in the legend without color
-    plt.plot([], [], color='none', label=f"Defined Burst Credit ({(burst_credit_kb * 1000 / 8):.2f} KB = {burst_credit_kb:.2f} Kb)")  # Invisible line for label
+    plt.plot([], [], color='none', label=f"Defined Burst Credit ({(burst_credit_kb * 1000 * 8 / 1024):.2f} KB = {burst_credit_kb:.2f} Kb)")  # Invisible line for label
     
     # Adding labels and title
     plt.xlabel("Time")
@@ -95,7 +95,7 @@ def main():
     args = parser.parse_args()
 
     # Call the plot function with the provided arguments
-    plot_bandwidth_usage(args.avg, args.peak, args.burst_credit / 8)  # Convert burst credit from KB to Kbit
+    plot_bandwidth_usage(args.avg, args.peak, args.burst_credit * 1024 * 8 / 1000)  # Convert burst credit from KB to Kbit
 
 # Run the script
 if __name__ == "__main__":
