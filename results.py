@@ -70,7 +70,7 @@ def plot_bandwidth_usage(avg_bandwidth_kbit, peak_bandwidth_kbit, burst_credit_k
     plt.scatter(exceeded_times.index, exceeded_times['packet_size'], color='red', label="Burst Size Exceeded", zorder=5)
     
     # Add the burst credit label in the legend without color
-    plt.plot([], [], color='none', label=f"Defined Burst Credit ({(burst_credit_kb / 1000 * 8):.2f} KB = {burst_credit_kb:.2f} Kb)")  # Invisible line for label
+    plt.plot([], [], color='none', label=f"Defined Burst Credit ({(burst_credit_kb * 1000 / 8):.2f} KB = {burst_credit_kb:.2f} Kb)")  # Invisible line for label
     
     # Adding labels and title
     plt.xlabel("Time")
