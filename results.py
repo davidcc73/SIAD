@@ -1,6 +1,5 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 import argparse
 
 # Function to load and process the log file
@@ -12,13 +11,17 @@ def load_logs(file_path):
     data["timestamp"] = pd.to_datetime(data["timestamp"], unit='s')
     data = data.set_index("timestamp")
     
-    # Convert packet_size from bytes to kilobytes
-    data["packet_size"] = data["packet_size"] / 1024  # Convert bytes to kilobytes
+    # Convert packet_size from bytes to kilobits (1 KB = 8 Kbits)
+    data["packet_size"] = (data["packet_size"] / 1024) * 8  # Convert bytes to kilobits
     
     return data
 
 # Function to track the credit system for burst size and plot the graph
-def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, burst_credit, file_path='received_packets.csv', output_file='bandwidth_usage.png'):
+def plot_bandwidth_usage(avg_bandwidth_kbit, peak_bandwidth_kbit, burst_credit_kb, file_path='received_packets.csv', output_file='bandwidth_usage.png'):
+    # Convert average and peak bandwidth from Kbits to KBytes for internal calculations
+    avg_bandwidth = avg_bandwidth_kbit / 8
+    peak_bandwidth = peak_bandwidth_kbit / 8
+
     # Load the log data
     data = load_logs(file_path)
     
@@ -26,7 +29,7 @@ def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, burst_credit, file_path=
     bandwidth_usage = data.resample('S').sum()  # Resample by second and sum packet sizes
 
     # Initialize credit and burst exceeded tracking
-    current_credit = burst_credit
+    current_credit = burst_credit_kb
     burst_exceeded = []  # List to store burst exceeded information
 
     # Iterate over each second of bandwidth usage
@@ -34,7 +37,7 @@ def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, burst_credit, file_path=
         # If bandwidth usage is below the average, the credit is replenished
         if row['packet_size'] < avg_bandwidth:
             # Add credit if there's bandwidth under the average
-            current_credit = min(current_credit + (avg_bandwidth - row['packet_size']), burst_credit)
+            current_credit = min(current_credit + (avg_bandwidth - row['packet_size']), burst_credit_kb)
             burst_exceeded.append(0)  # Burst not exceeded
         elif row['packet_size'] > avg_bandwidth:
             # If usage exceeds the average bandwidth, check if there is enough credit
@@ -56,22 +59,22 @@ def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, burst_credit, file_path=
 
     # Plotting the graph
     plt.figure(figsize=(10, 6))
-    plt.plot(bandwidth_usage.index, bandwidth_usage['packet_size'], label="Bandwidth Usage (KB)", color="b")
+    plt.plot(bandwidth_usage.index, bandwidth_usage['packet_size'], label="Bandwidth Usage (Kbit)", color="b")
     
-    # Plot horizontal lines for average and peak bandwidth
-    plt.axhline(avg_bandwidth, color='g', linestyle='--', label=f"Defined Average Bandwidth ({avg_bandwidth:.2f} KB)")
-    plt.axhline(peak_bandwidth, color='r', linestyle='--', label=f"Defined Peak Bandwidth ({peak_bandwidth:.2f} KB)")
+    # Plot horizontal lines for average and peak bandwidth in Kbits
+    plt.axhline(avg_bandwidth_kbit, color='g', linestyle='--', label=f"Defined Average Bandwidth ({avg_bandwidth_kbit:.2f} Kbit)")
+    plt.axhline(peak_bandwidth_kbit, color='r', linestyle='--', label=f"Defined Peak Bandwidth ({peak_bandwidth_kbit:.2f} Kbit)")
     
     # Highlight periods where burst credit was exceeded
     exceeded_times = bandwidth_usage[bandwidth_usage['burst_exceeded'] == 1]
     plt.scatter(exceeded_times.index, exceeded_times['packet_size'], color='red', label="Burst Size Exceeded", zorder=5)
     
     # Add the burst credit label in the legend without color
-    plt.plot([], [], color='none', label=f"Defined Burst Credit ({burst_credit:.2f} KB)")  # Invisible line for label
+    plt.plot([], [], color='none', label=f"Defined Burst Credit ({burst_credit_kb:.2f} KB)")  # Invisible line for label
     
     # Adding labels and title
     plt.xlabel("Time")
-    plt.ylabel("Bandwidth Usage (KB)")
+    plt.ylabel("Bandwidth Usage (Kbit)")
     plt.title("Bandwidth Usage per Second")
     plt.grid(True)
     plt.legend()
@@ -84,8 +87,8 @@ def plot_bandwidth_usage(avg_bandwidth, peak_bandwidth, burst_credit, file_path=
 def main():
     # Set up the argument parser
     parser = argparse.ArgumentParser(description="Plot bandwidth usage with traffic shaping values")
-    parser.add_argument("avg", type=float, help="Average Bandwidth (in KB)")
-    parser.add_argument("peak", type=float, help="Peak Bandwidth Burst Size (in KB)")
+    parser.add_argument("avg", type=float, help="Average Bandwidth (in Kbit)")
+    parser.add_argument("peak", type=float, help="Peak Bandwidth Burst Size (in Kbit)")
     parser.add_argument("burst_credit", type=float, help="Burst Credit Size (in KB)")
 
     # Parse the arguments
