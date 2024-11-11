@@ -14,11 +14,11 @@ sudo python3 send.py --src_ip 180.168.0.1 --dst_ip 180.168.0.2 --iface ens256 --
 sudo python3 receive.py --l4 UDP --port 12345 --iface ens256
 
 
-sudo python3 send.py --src_ip 180.168.0.1 --dst_ip 180.168.0.2 --iface ens256 --size 1000 --c 50 --l4 TCP --sport 5555 --dport 80 --i 0.5
-sudo python3 receive.py --l4 TCP --port 12345 --iface ens256
+sudo python3 send.py --src_ip 180.168.0.3 --dst_ip 180.168.0.2 --iface ens256 --size 1000 --c 1000 --l4 UDP --sport 5555 --dport 1119 --i 0.001
+sudo python3 receive.py --l4 UDP --port 1119 --iface ens256
 
 
 
 
 # process results
-sudo python3 results.py 1.5 2.5 4
+sudo python3 results.py 230 280 30
