@@ -11,8 +11,8 @@ def load_logs(file_path):
     data["timestamp"] = pd.to_datetime(data["timestamp"], unit='s')
     data = data.set_index("timestamp")
     
-    # Convert packet_size from bytes to kilobits (1 KB = 8 Kbits)
-    data["packet_size"] = (data["packet_size"] / 1024) * 8  # Convert bytes to kilobits
+    # Convert packet_size from bytes to kilobits
+    data["packet_size"] = (data["packet_size"] * 8 / 1000)   # Convert bytes to kilobits
     
     return data
 
@@ -70,7 +70,7 @@ def plot_bandwidth_usage(avg_bandwidth_kbit, peak_bandwidth_kbit, burst_credit_k
     plt.scatter(exceeded_times.index, exceeded_times['packet_size'], color='red', label="Burst Size Exceeded", zorder=5)
     
     # Add the burst credit label in the legend without color
-    plt.plot([], [], color='none', label=f"Defined Burst Credit ({burst_credit_kb:.2f} KB)")  # Invisible line for label
+    plt.plot([], [], color='none', label=f"Defined Burst Credit ({(burst_credit_kb / 1000 * 8):.2f} KB = {burst_credit_kb:.2f} Kb)")  # Invisible line for label
     
     # Adding labels and title
     plt.xlabel("Time")
