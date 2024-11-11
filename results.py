@@ -19,7 +19,7 @@ def load_logs(file_path):
 # Function to track the credit system for burst size and plot the graph
 def plot_bandwidth_usage(avg_bandwidth_kbit, peak_bandwidth_kbit, burst_credit_kb, file_path='received_packets.csv', output_file='bandwidth_usage.png'):
     # Convert average and peak bandwidth from Kbits to KBytes for internal calculations
-    avg_bandwidth = avg_bandwidth_kbit * 1000 / 8 / 1024
+    avg_bandwidth = avg_bandwidth_kbit * 1000 / 8 / 1024  # Converted to KB
 
     # Load the log data
     data = load_logs(file_path)
@@ -33,21 +33,23 @@ def plot_bandwidth_usage(avg_bandwidth_kbit, peak_bandwidth_kbit, burst_credit_k
 
     # Iterate over each second of bandwidth usage
     for i, row in bandwidth_usage.iterrows():
-        if row['packet_size'] > avg_bandwidth + current_credit:
-            # Only add credit if there's bandwidth under the average
-            current_credit = max(current_credit - (avg_bandwidth - row['packet_size']), 0)
-            burst_exceeded.append(1)  # Burst exceeded
-
-        elif row['packet_size'] < avg_bandwidth:
-            current_credit = min(burst_credit_kb, current_credit + (row['packet_size'] - avg_bandwidth))
-            burst_exceeded.append(1)  # Burst exceeded
-
-        else:  # No burst exceeded
-            current_credit = 0
-            burst_exceeded.append(0)  # No excess, burst not exceeded
+        usage_kbit = row['packet_size']
+        
+        if usage_kbit > avg_bandwidth_kbit:  # Exceeds average
+            credit_required = usage_kbit - avg_bandwidth_kbit
+            if current_credit >= credit_required:
+                current_credit -= credit_required
+                burst_exceeded.append(0)  # Credit sufficient, no burst exceeded
+            else:
+                burst_exceeded.append(1)  # Burst exceeded
+                current_credit = 0  # Credit depleted
+        else:
+            # Bandwidth usage is below the average, add to credit up to burst_credit_kb
+            credit_replenish = avg_bandwidth_kbit - usage_kbit
+            current_credit = min(burst_credit_kb, current_credit + credit_replenish)
+            burst_exceeded.append(0)  # No burst exceeded
 
     # Ensure the burst_exceeded list matches the length of bandwidth_usage DataFrame
-    burst_exceeded = burst_exceeded[:len(bandwidth_usage)]  # Truncate or extend if necessary
     bandwidth_usage['burst_exceeded'] = burst_exceeded
 
     # Plotting the graph
@@ -63,7 +65,7 @@ def plot_bandwidth_usage(avg_bandwidth_kbit, peak_bandwidth_kbit, burst_credit_k
     plt.scatter(exceeded_times.index, exceeded_times['packet_size'], color='red', label="Burst Size Exceeded", zorder=5)
     
     # Add the burst credit label in the legend without color
-    plt.plot([], [], color='none', label=f"Defined Burst Credit ({(burst_credit_kb * 1000 / 8 / 1024):.2f} KB = {burst_credit_kb:.2f} Kb)")  # Invisible line for label
+    plt.plot([], [], color='none', label=f"Defined Burst Credit ({burst_credit_kb:.2f} KB = {(burst_credit_kb * 8):.2f} Kbit)")  # Invisible line for label
     
     # Adding labels and title
     plt.xlabel("Time")
@@ -88,7 +90,7 @@ def main():
     args = parser.parse_args()
 
     # Call the plot function with the provided arguments
-    plot_bandwidth_usage(args.avg, args.peak, args.burst_credit * 1024 * 8 / 1000)  # Convert burst credit from KB to Kbit
+    plot_bandwidth_usage(args.avg, args.peak, args.burst_credit)
 
 # Run the script
 if __name__ == "__main__":
