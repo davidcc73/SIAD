@@ -6,6 +6,7 @@ david ALL=(ALL) ALL
 
 
 ####dependencies
+sudo apt install git
 sudo apt install scapy
 sudo apt install python3-pandas
 
