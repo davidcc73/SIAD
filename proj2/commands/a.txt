@@ -1,0 +1,10 @@
+sudo iscsiadm --mode discovery --type sendtargets --portal 180.168.0.10
+
+sudo iscsiadm --mode node --targetname iqn.2005-10.org.freenas.ctl:target1 --portal 180.168.0.10:3260 --login
+
+sudo iscsiadm --mode session
+
+
+
+lsblk
+sudo fdisk -l

@@ -73,16 +73,23 @@ def plot_latency(destination_directory, df_grouped, output, title, x, y):
 
 
 def main():
+
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description="Process latency logs and generate latency plots.")
     parser.add_argument("--source_directory", type=str, help="Path to the source directory containing the latency logs.")
     parser.add_argument("--destination_directory", type=str, help="Path to the destination directory for output files.")
-    parser.add_argument("--interval_seg", type=int, help="Interval duration in seconds for averaging latency (default: 30 seconds).")
+    parser.add_argument("--interval_seg", type=int, help="Interval duration in seconds for averaging latency.")
+    parser.add_argument("--test_name", type=str, help="Name of the running test.")
+    parser.add_argument("--name_prefix", type=str, help="Prefix to output grapgh.")
+
+    
     args = parser.parse_args()
     
     source_directory = args.source_directory
     destination_directory = args.destination_directory
     interval_seg = args.interval_seg
+    test_name = args.test_name
+    name_prefix = args.name_prefix
 
     # Parse the latency log
     df = parse_lat_log(source_directory)
@@ -95,8 +102,8 @@ def main():
         plot_latency(
             destination_directory, 
             grouped_df, 
-            f"latency_avg_{interval_seg}s.svg", 
-            f"Latency Sequential Read/Write - {interval_seg} Second Averages", 
+            f"{name_prefix}_avg_{interval_seg}s.svg", 
+            f"Latency {test_name} - {interval_seg} Second Averages", 
             "Time (Seconds)", 
             "Average Latency (ms)"
         )
