@@ -1,3 +1,7 @@
+sudo apt-get -y install fio
+
+sudo apt install open-iscsi
+
 sudo iscsiadm --mode discovery --type sendtargets --portal 180.168.0.10
 
 sudo iscsiadm --mode node --targetname iqn.2005-10.org.freenas.ctl:target1 --portal 180.168.0.10:3260 --login

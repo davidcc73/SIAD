@@ -1,9 +1,7 @@
-
-
 #mudança temporaria
 sudo ip link set dev ens256 mtu 1500
 
-$also change MTU trueNAS and vswitch
+#also change MTU trueNAS and vswitch
 
 #verify the extent size
 
@@ -16,16 +14,17 @@ sudo fio --name=seq_readwrite \
          --numjobs=1 \
          --iodepth=1 \
          --time_based \
-         --runtime=300 \
+         --runtime=900 \
+         --ramp_time=150 \
          --size=1G \
          --ioengine=libaio \
          --group_reporting \
          --stonewall \
          --output-format=csv \
-         --write_hist_log=results/512/1500/sequential \
-         --write_lat_log=results/512/1500/sequential \
-         --write_bw_log=results/512/1500/sequential \
-         --write_iops_log=results/512/1500/sequential \
+         --write_hist_log=results/512/1500/sequential/ \
+         --write_lat_log=results/512/1500/sequential/ \
+         --write_bw_log=results/512/1500/sequential/ \
+         --write_iops_log=results/512/1500/sequential/ \
          --output results/512/1500/sequential/seq_read_write.log
 
 #2. Random Read and Write Test
@@ -37,16 +36,17 @@ sudo fio --name=rand_readwrite \
          --numjobs=1 \
          --iodepth=16 \
          --time_based \
-         --runtime=300 \
+         --runtime=900 \
+         --ramp_time=150 \
          --size=1G \
          --ioengine=libaio \
          --group_reporting \
          --stonewall \
          --output-format=csv \
-         --write_hist_log=results/512/1500/rand \
-         --write_lat_log=results/512/1500/rand \
-         --write_bw_log=results/512/1500/rand \
-         --write_iops_log=results/512/1500/rand \
+         --write_hist_log=results/512/1500/rand/ \
+         --write_lat_log=results/512/1500/rand/ \
+         --write_bw_log=results/512/1500/rand/ \
+         --write_iops_log=results/512/1500/rand/ \
          --output results/512/1500/rand/rand_read_write.log
 
 
@@ -54,16 +54,16 @@ sudo fio --name=rand_readwrite \
 
 
 python3 parse_data.py \
-    --source_directory "results/512/1500/sequential" \
-    --destination_directory "parsed_results/512/1500/" \
-    --interval_seg 30 \
+    --source_directory "results/512/1500/sequential/" \
+    --destination_directory "parsed_results/512/" \
+    --interval_seg 60 \
     --test_name "Sequential Read/Write" \
     --name_prefix "seq"
 
 
 python3 parse_data.py \
-    --source_directory "results/512/1500/rand" \
-    --destination_directory "parsed_results/512/1500/" \
-    --interval_seg 30 \
+    --source_directory "results/512/1500/rand/" \
+    --destination_directory "parsed_results/512/" \
+    --interval_seg 60 \
     --test_name "Random Read/Write" \
     --name_prefix "rand"
