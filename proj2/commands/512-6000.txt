@@ -21,7 +21,6 @@ sudo fio --name=seq_readwrite \
          --group_reporting \
          --stonewall \
          --output-format=csv \
-         --write_hist_log=results/512/6000/sequential/ \
          --write_lat_log=results/512/6000/sequential/ \
          --write_bw_log=results/512/6000/sequential/ \
          --output results/512/6000/sequential/seq_read_write.log
@@ -42,7 +41,6 @@ sudo fio --name=rand_readwrite \
          --group_reporting \
          --stonewall \
          --output-format=csv \
-         --write_hist_log=results/512/6000/rand/ \
          --write_lat_log=results/512/6000/rand/ \
          --write_bw_log=results/512/6000/rand/ \
          --output results/512/6000/rand/rand_read_write.log
