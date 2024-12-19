@@ -24,7 +24,6 @@ sudo fio --name=seq_readwrite \
          --write_hist_log=results/4096/6000/sequential/ \
          --write_lat_log=results/4096/6000/sequential/ \
          --write_bw_log=results/4096/6000/sequential/ \
-         --write_iops_log=results/4096/6000/sequential/ \
          --output results/4096/6000/sequential/seq_read_write.log
 
 #2. Random Read and Write Test
@@ -46,7 +45,6 @@ sudo fio --name=rand_readwrite \
          --write_hist_log=results/4096/6000/rand/ \
          --write_lat_log=results/4096/6000/rand/ \
          --write_bw_log=results/4096/6000/rand/ \
-         --write_iops_log=results/4096/6000/rand/ \
          --output results/4096/6000/rand/rand_read_write.log
 
 
