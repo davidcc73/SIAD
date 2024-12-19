@@ -11,8 +11,8 @@ sudo fio --name=seq_readwrite \
          --direct=1 \
          --rw=readwrite \
          --bs=4k \
-         --numjobs=1 \
-         --iodepth=1 \
+         --numjobs=3 \
+         --iodepth=16 \
          --time_based \
          --runtime=900 \
          --ramp_time=150 \
@@ -33,7 +33,7 @@ sudo fio --name=rand_readwrite \
          --direct=1 \
          --rw=randwrite \
          --bs=4k \
-         --numjobs=1 \
+         --numjobs=3 \
          --iodepth=16 \
          --time_based \
          --runtime=900 \
