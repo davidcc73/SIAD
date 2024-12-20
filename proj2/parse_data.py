@@ -86,6 +86,7 @@ def main():
     parser.add_argument("--interval_seg", required=True, type=int, help="Interval duration in seconds for averaging latency.")
     parser.add_argument("--test_name", required=True, type=str, help="Name of the running test.")
     parser.add_argument("--name_prefix", required=True, type=str, help="Prefix for output graph.")
+    parser.add_argument("--id_test", required=True, type=int, help="ID of current scenario")
 
     args = parser.parse_args()
 
@@ -100,7 +101,7 @@ def main():
         plot_latency(
             args.destination_directory,
             grouped_df,
-            f"{args.name_prefix}_avg_{args.interval_seg}s.svg",
+            f"{args.name_prefix}_avg_{args.interval_seg}s-ID{args.id_test}.svg",
             f"Latency {args.test_name} - {args.interval_seg} Second Averages",
             "Time (Seconds)",
             "Average Latency (ms)"

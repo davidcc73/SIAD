@@ -54,7 +54,8 @@ python3 parse_data.py \
     --destination_directory "parsed_results/4096/9000/" \
     --interval_seg 30 \
     --test_name "Sequential Read/Write" \
-    --name_prefix "seq"
+    --name_prefix "seq" \
+    --id_test 6
 
 
 python3 parse_data.py \
@@ -62,4 +63,5 @@ python3 parse_data.py \
     --destination_directory "parsed_results/4096/9000/" \
     --interval_seg 30 \
     --test_name "Random Read/Write" \
-    --name_prefix "rand"
+    --name_prefix "rand" \
+    --id_test 6
